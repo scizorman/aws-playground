@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package user.v1beta1;
+
+option csharp_namespace = "User.V1Beta1";
+option go_package = "userv1beta1";
+option java_multiple_files = true;
+option java_outer_classname = "UserApiProto";
+option java_package = "com.user.v1beta1";
+option objc_class_prefix = "UXX";
+option php_namespace = "User\\V1Beta1";
+
+import "user/user.proto";
+
+// The user API.
+service UserAPI {
+  // Get a user.
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+message GetUserRequest {
+  // A user ID.
+  string user_id = 1;
+}
+
+message GetUserResponse {
+  // A user.
+  user.v1beta1.User user = 1;
+}

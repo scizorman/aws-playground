@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package user.v1beta1;
+
+option csharp_namespace = "User.V1Beta1";
+option go_package = "userv1beta1";
+option java_multiple_files = true;
+option java_outer_classname = "UserProto";
+option java_package = "com.user.v1beta1";
+option objc_class_prefix = "UXX";
+option php_namespace = "User\\V1Beta1";
+
+// A user's information.
+message User {
+  // A user's ID.
+  string id = 1;
+  // An email address.
+  string email = 2;
+  // A username.
+  string username = 3;
+  // A display name.
+  string display_name = 4;
+}
