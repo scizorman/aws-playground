@@ -1,0 +1,27 @@
+{
+  "folders": [
+    {
+      "name": "Back-end",
+      "path": "backend"
+    },
+    {
+      "name": "Infrastructure",
+      "path": "infrastructure"
+    }
+  ],
+  "settings": {
+    "editor.codeActionOnSave": {
+      "source.organizaImports": true
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true
+  },
+  "extensions": {
+    "recommendations": [
+      "github.vscode-pull-request-github",
+      "amazonwebservices.aws-toolkit-vscode"
+    ]
+  }
+}
