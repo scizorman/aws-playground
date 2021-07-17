@@ -1,5 +1,5 @@
-SCOPE   :=
-TAG := $(shell git rev-parse --short --verify HEAD)
+SCOPE :=
+TAG   := $(shell git rev-parse --short --verify HEAD)
 
 repository := 217082601537.dkr.ecr.ap-northeast-1.amazonaws.com/$(SCOPE)
 
