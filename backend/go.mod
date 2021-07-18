@@ -2,9 +2,4 @@ module github.com/scizorman/aws-playground/backend
 
 go 1.16
 
-require (
-	github.com/gogo/protobuf v1.3.2
-	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
-	github.com/labstack/echo/v4 v4.4.0
-	google.golang.org/grpc v1.39.0
-)
+require github.com/labstack/echo/v4 v4.4.0
