@@ -48,3 +48,31 @@ resource "aws_lb_listener" "aws_playground" {
     }
   }
 }
+
+resource "aws_lb_target_group" "aws_playground" {
+  name        = "aws-playground"
+  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
+  port        = 1323
+  protocol    = "HTTP"
+  target_type = "ip"
+
+  health_check {
+    port = 1323
+    path = "/"
+  }
+}
+
+resource "aws_lb_listener_rule" "aws_playground" {
+  listener_arn = aws_lb_listener.aws_playground.arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.aws_playground.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["*"]
+    }
+  }
+}
