@@ -5,5 +5,5 @@ RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app/api ./cmd/api
 
 FROM scratch
 COPY --from=builder /app/api /api
-EXPOSE $SERVER_PORT
+EXPOSE 1323
 CMD [ "/api" ]
