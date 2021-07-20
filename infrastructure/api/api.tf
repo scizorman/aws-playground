@@ -13,18 +13,12 @@ resource "aws_ecs_task_definition" "aws_playground_api" {
   container_definitions = jsonencode(
     [
       {
-        name  = "aws-playground-api"
-        image = "217082601537.dkr.ecr.ap-northeast-1.amazonaws.com/aws-playground/api:fd68f44"
+        name  = "nginx"
+        image = "nginx:1.21.1"
         portMappings = [
           {
-            containerPort = 1323
-            protocol      = "tcp"
-          }
-        ]
-        environment = [
-          {
-            name  = "SERVER_PORT"
-            value = "1323"
+            containerPort = 80
+            hostPort      = 80
           }
         ]
       }
@@ -72,11 +66,12 @@ resource "aws_ecs_service" "aws_playground_api" {
       data.terraform_remote_state.network.outputs.subnet_id.private_1c,
       data.terraform_remote_state.network.outputs.subnet_id.private_1d,
     ]
+    security_groups = [aws_security_group.aws_playground_api.id]
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.aws_playground.arn
-    container_name   = "aws-playground-api"
-    container_port   = 1323
+    container_name   = "nginx"
+    container_port   = 80
   }
 }

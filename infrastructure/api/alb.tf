@@ -51,13 +51,13 @@ resource "aws_lb_listener" "aws_playground" {
 
 resource "aws_lb_target_group" "aws_playground" {
   name        = "aws-playground"
-  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
-  port        = 1323
+  port        = 80
   protocol    = "HTTP"
   target_type = "ip"
+  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
 
   health_check {
-    port = 1323
+    port = 80
     path = "/"
   }
 }
