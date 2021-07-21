@@ -13,14 +13,19 @@ resource "aws_ecs_task_definition" "aws_playground_api" {
   container_definitions = jsonencode(
     [
       {
-        name  = "nginx"
-        image = "nginx:1.21.1"
+        name  = "aws-playground-api"
+        image = "217082601537.dkr.ecr.ap-northeast-1.amazonaws.com/aws-playground/api:a9f376e"
+        environment = [
+          {
+            name  = "SERVER_PORT"
+            value = "80"
+          }
+        ]
         portMappings = [
           {
             containerPort = 80
-            hostPort      = 80
           }
-        ]
+        ],
       }
     ]
   )
@@ -71,7 +76,7 @@ resource "aws_ecs_service" "aws_playground_api" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.aws_playground.arn
-    container_name   = "nginx"
+    container_name   = "aws-playground-api"
     container_port   = 80
   }
 }

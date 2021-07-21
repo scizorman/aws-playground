@@ -35,7 +35,7 @@ resource "aws_lb" "aws_playground" {
 }
 
 resource "aws_lb_listener" "aws_playground" {
-  port              = "80"
+  port              = 80
   protocol          = "HTTP"
   load_balancer_arn = aws_lb.aws_playground.arn
 
