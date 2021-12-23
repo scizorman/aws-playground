@@ -1,13 +1,9 @@
 {
   "folders": [
     {
-      "name": "Back-end",
-      "path": "backend"
+      "name": "API on ECS",
+      "path": "api-on-ecs"
     },
-    {
-      "name": "Infrastructure",
-      "path": "infrastructure"
-    }
   ],
   "settings": {
     "editor.codeActionOnSave": {
