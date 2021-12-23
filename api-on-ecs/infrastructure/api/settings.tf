@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket  = "aws-playground-tfstate"
-    key     = "api/terraform.tfstate"
+    key     = "api-on-ec2/api/terraform.tfstate"
     region  = "ap-northeast-1"
     encrypt = true
     acl     = "private"
