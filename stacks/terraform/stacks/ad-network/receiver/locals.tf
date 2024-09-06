@@ -9,4 +9,8 @@ locals {
   private_subnet_ipv6_prefixes = [11, 13, 14]
 
   vpc_flow_log_bucket_name = "${local.name}-vpc-flow-log"
+
+  alb_log_bucket_name        = "${local.name}-alb-log"
+  alb_access_logs_prefix     = "${local.name}-alb-access-log"
+  alb_connection_logs_prefix = "${local.name}-alb-connection-log"
 }
