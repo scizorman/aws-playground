@@ -1,0 +1,29 @@
+name: 'Terraform stacks'
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/terraform-stacks.yaml'
+      - 'stacks/terraform/**'
+
+defaults:
+  run:
+    working-directory: 'stacks/terraform'
+
+jobs:
+  lint:
+    name: 'Lint'
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - name: 'Read Terraform version'
+        run: |
+          awk '{printf "TERRAFORM_VERSION=%s",$0}' .terraform-version >. "${GITHUB_ENV}"
+      - name: 'Set up Terraform'
+        uses: 'hashicorp/setup-terraform@v3'
+        with:
+          terraform_version: '${{ env.TERRAFORM_VERSION }}'
+      - name: 'Lint'
+        run: |
+          make lint
