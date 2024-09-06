@@ -10,7 +10,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "vpc_flow_log" {
   bucket = aws_s3_bucket.vpc_flow_log.id
 
   rule {
-    id     = "expiration-rule"
+    id     = "30-days-retention"
     status = "Enabled"
 
     expiration {
