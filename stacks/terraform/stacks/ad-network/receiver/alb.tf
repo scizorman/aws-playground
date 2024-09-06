@@ -1,9 +1,11 @@
 resource "aws_lb" "this" {
-  name                       = local.name
-  internal                   = false
-  ip_address_type            = "dualstack-without-public-ipv4"
-  security_groups            = [aws_security_group.alb.id]
-  subnets                    = module.vpc.public_subnets
+  name               = local.name
+  internal           = false
+  load_balancer_type = "application"
+  ip_address_type    = "dualstack-without-public-ipv4"
+  subnets            = module.vpc.public_subnets
+  security_groups    = [aws_security_group.alb.id]
+
   enable_deletion_protection = false
   drop_invalid_header_fields = true
 
@@ -26,16 +28,20 @@ resource "aws_lb" "this" {
 
 resource "aws_security_group" "alb" {
   name        = "${local.name}-alb"
-  description = "Security group for the ALB of '${local.name}'"
+  description = "Security group for the ALB of ${local.name}"
   vpc_id      = module.vpc.vpc_id
+
+  tags = {
+    Name = "${local.name}-alb"
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "alb_from_all_http_ipv4" {
   security_group_id = aws_security_group.alb.id
   description       = "Allow inbound HTTP traffic from all IPv4 addresses"
   cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 80
   ip_protocol       = "tcp"
+  from_port         = 80
   to_port           = 80
 }
 
@@ -43,8 +49,8 @@ resource "aws_vpc_security_group_ingress_rule" "alb_from_all_http_ipv6" {
   security_group_id = aws_security_group.alb.id
   description       = "Allow inbound HTTP traffic from all IPv6 addresses"
   cidr_ipv6         = "::/0"
-  from_port         = 80
   ip_protocol       = "tcp"
+  from_port         = 80
   to_port           = 80
 }
 
@@ -116,10 +122,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "alb_log" {
 }
 
 resource "aws_lb_target_group" "this" {
-  name     = local.name
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = module.vpc.vpc_id
+  name            = local.name
+  vpc_id          = module.vpc.vpc_id
+  target_type     = "instance"
+  ip_address_type = "ipv6"
+  protocol        = "HTTP"
+  port            = 8080
 
   health_check {
     matcher = "200"
