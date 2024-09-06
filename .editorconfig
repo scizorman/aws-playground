@@ -1,0 +1,15 @@
+root = true
+
+[*]
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+max_line_length = 120
+
+[Makefile,*.mk]
+indent_style = tag
+indent_size = 4
+
+[*.{tf,tfvars,hcl,tftest.hcl}]
+indent_style = space
+indent_size = 2
