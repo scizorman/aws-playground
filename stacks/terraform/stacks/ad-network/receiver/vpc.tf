@@ -46,6 +46,40 @@ resource "aws_s3_bucket_lifecycle_configuration" "vpc_flow_log" {
   }
 }
 
+module "gateway_endpoints" {
+  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = "5.13.0"
+
+  vpc_id = module.vpc.vpc_id
+
+  endpoints = {
+    for service in local.gateway_vpc_endpoint_services : service => {
+      service         = "s3"
+      service_type    = "Gateway"
+      route_table_ids = module.vpc.private_route_table_ids
+      tags            = { Name = "${local.name}-${service}" }
+    }
+  }
+}
+
+module "interface_endpoints" {
+  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = "5.13.0"
+
+  vpc_id             = module.vpc.vpc_id
+  security_group_ids = [aws_security_group.vpc_endpoints.id]
+  subnet_ids         = module.vpc.private_subnets
+
+  endpoints = {
+    for service in local.interface_vpc_endpoint_services : service => {
+      service             = service
+      service_type        = "Interface"
+      private_dns_enabled = true
+      tags                = { Name = "${local.name}-${service}" }
+    }
+  }
+}
+
 resource "aws_security_group" "vpc_endpoints" {
   name        = "${local.name}-vpc-endpoints"
   description = "Security group for VPC endpoints of ${local.name}"
@@ -88,59 +122,4 @@ resource "aws_vpc_security_group_egress_rule" "vpc_endpoint_to_vpc_all_https_ipv
   ip_protocol       = "tcp"
   from_port         = 443
   to_port           = 443
-}
-
-module "gateway_endpoints" {
-  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
-  version = "5.13.0"
-
-  vpc_id = module.vpc.vpc_id
-
-  endpoints = {
-    s3 = {
-      service         = "s3"
-      service_type    = "Gateway"
-      route_table_ids = module.vpc.private_route_table_ids
-      tags            = { Name = "${local.name}-s3" }
-    }
-  }
-}
-
-module "interface_endpoints" {
-  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
-  version = "5.13.0"
-
-  vpc_id             = module.vpc.vpc_id
-  security_group_ids = [aws_security_group.vpc_endpoints.id]
-  subnet_ids         = module.vpc.private_subnets
-
-  endpoints = {
-    ec2 = {
-      service         = "ec2"
-      service_type    = "Interface"
-      route_table_ids = module.vpc.private_route_table_ids
-      tags            = { Name = "${local.name}-ec2" }
-    }
-
-    ec2messages = {
-      service         = "ec2messages"
-      service_type    = "Interface"
-      route_table_ids = module.vpc.private_route_table_ids
-      tags            = { Name = "${local.name}-ec2messages" }
-    }
-
-    ssm = {
-      service         = "ssm"
-      service_type    = "Interface"
-      route_table_ids = module.vpc.private_route_table_ids
-      tags            = { Name = "${local.name}-ssm" }
-    }
-
-    ssmmessages = {
-      service         = "ssmmessages"
-      service_type    = "Interface"
-      route_table_ids = module.vpc.private_route_table_ids
-      tags            = { Name = "${local.name}-ssmmessages" }
-    }
-  }
 }
