@@ -25,7 +25,8 @@ module "vpc" {
 }
 
 resource "aws_s3_bucket" "vpc_flow_log" {
-  bucket = local.vpc_flow_log_bucket_name
+  bucket        = local.vpc_flow_log_bucket_name
+  force_destroy = true
 
   tags = {
     Name = local.vpc_flow_log_bucket_name
