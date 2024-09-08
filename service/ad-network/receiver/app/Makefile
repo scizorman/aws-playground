@@ -1,11 +1,7 @@
 export GOOS ?=
 export GOARCH ?=
 
-ifeq ($(CI),true)
-include ci.mk
-else
-include local.mk
-endif
+include $(if $(CI),ci.mk,local.mk)
 
 .PHONY: clean
 clean:
