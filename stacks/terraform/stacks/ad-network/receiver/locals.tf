@@ -16,4 +16,7 @@ locals {
   alb_log_bucket_name        = "${local.name}-alb-log"
   alb_access_logs_prefix     = "${local.name}-alb-access-log"
   alb_connection_logs_prefix = "${local.name}-alb-connection-log"
+
+  github_actions_oidc_provider_arn           = "arn:aws:iam::217082601537:oidc-provider/token.actions.githubusercontent.com"
+  github_actions_artifact_uploader_role_name = "${local.name}-github-actions-artifact-uploader"
 }
