@@ -11,6 +11,7 @@ locals {
   gateway_vpc_endpoint_services   = ["s3"]
   interface_vpc_endpoint_services = ["ec2", "ec2messages", "ssm", "ssmmessages"]
 
+  artifact_bucket_name = "${local.name}-artifact"
 
   alb_log_bucket_name        = "${local.name}-alb-log"
   alb_access_logs_prefix     = "${local.name}-alb-access-log"
