@@ -1,4 +1,6 @@
 locals {
+  region = "ap-northeast-1"
+
   name = "ad-network-receiver"
 
   cidr                            = "10.100.0.0/16"
