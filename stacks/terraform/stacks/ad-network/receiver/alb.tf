@@ -1,30 +1,30 @@
-resource "aws_lb" "this" {
-  name               = local.name
-  internal           = false
-  load_balancer_type = "application"
-  ip_address_type    = "dualstack-without-public-ipv4"
-  subnets            = module.vpc.public_subnets
-  security_groups    = [aws_security_group.alb.id]
+# resource "aws_lb" "this" {
+#   name               = local.name
+#   internal           = false
+#   load_balancer_type = "application"
+#   ip_address_type    = "dualstack"
+#   subnets            = module.vpc.public_subnets
+#   security_groups    = [aws_security_group.alb.id]
 
-  enable_deletion_protection = false
-  drop_invalid_header_fields = true
+#   enable_deletion_protection = false
+#   drop_invalid_header_fields = true
 
-  access_logs {
-    bucket  = aws_s3_bucket.alb_log.id
-    prefix  = local.alb_access_logs_prefix
-    enabled = true
-  }
+#   access_logs {
+#     bucket  = aws_s3_bucket.alb_log.id
+#     prefix  = local.alb_access_logs_prefix
+#     enabled = true
+#   }
 
-  connection_logs {
-    bucket  = aws_s3_bucket.alb_log.id
-    prefix  = local.alb_connection_logs_prefix
-    enabled = true
-  }
+#   connection_logs {
+#     bucket  = aws_s3_bucket.alb_log.id
+#     prefix  = local.alb_connection_logs_prefix
+#     enabled = true
+#   }
 
-  tags = {
-    Name = local.name
-  }
-}
+#   tags = {
+#     Name = local.name
+#   }
+# }
 
 resource "aws_security_group" "alb" {
   name        = "${local.name}-alb"
@@ -69,7 +69,8 @@ resource "aws_vpc_security_group_egress_rule" "alb_to_vpc_all_traffic_ipv6" {
 }
 
 resource "aws_s3_bucket" "alb_log" {
-  bucket = local.alb_log_bucket_name
+  bucket        = local.alb_log_bucket_name
+  force_destroy = true
 
   tags = {
     Name = local.alb_log_bucket_name
@@ -139,13 +140,13 @@ resource "aws_lb_target_group" "this" {
   }
 }
 
-resource "aws_lb_listener" "this_http" {
-  load_balancer_arn = aws_lb.this.arn
-  port              = 80
-  protocol          = "HTTP"
+# resource "aws_lb_listener" "this_http" {
+#   load_balancer_arn = aws_lb.this.arn
+#   port              = 80
+#   protocol          = "HTTP"
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.this.arn
-  }
-}
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.this.arn
+#   }
+# }

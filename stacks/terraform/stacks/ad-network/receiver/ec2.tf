@@ -20,14 +20,28 @@ data "aws_iam_policy_document" "app_assume_role" {
   }
 }
 
-# resource "aws_iam_role_policy" "app" {
-#   role   = aws_iam_role.app.name
-#   policy = data.aws_iam_policy_document.app.json
-# }
+resource "aws_iam_role_policy" "app" {
+  role   = aws_iam_role.app.name
+  policy = data.aws_iam_policy_document.app.json
+}
 
-# data "aws_iam_policy_document" "app" {
-#   statement {}
-# }
+data "aws_iam_policy_document" "app" {
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:ListBucketVersions",
+    ]
+    resources = [aws_s3_bucket.artifact.arn]
+  }
+
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+    ]
+    resources = ["${aws_s3_bucket.artifact.arn}/*"]
+  }
+}
 
 resource "aws_iam_instance_profile" "this" {
   name = local.name
@@ -35,11 +49,12 @@ resource "aws_iam_instance_profile" "this" {
 }
 
 resource "aws_launch_template" "this" {
-  name          = local.name
-  description   = "Launch template for the ${local.name} EC2 instances"
-  image_id      = "ami-0adfe5bdf08f77674"
-  instance_type = "c7g.medium"
-  ebs_optimized = true
+  name                                 = local.name
+  description                          = "Launch template for the ${local.name} EC2 instances"
+  image_id                             = "ami-0aea344faf91f8adf"
+  instance_type                        = "c7g.medium"
+  instance_initiated_shutdown_behavior = "terminate"
+  ebs_optimized                        = true
 
   credit_specification {
     cpu_credits = "standard"
@@ -105,6 +120,11 @@ resource "aws_autoscaling_group" "this" {
     }
   }
 }
+
+# resource "aws_autoscaling_attachment" "this" {
+#   autoscaling_group_name = aws_autoscaling_group.this.name
+#   lb_target_group_arn    = aws_lb_target_group.this.arn
+# }
 
 resource "aws_security_group" "app" {
   name   = "${local.name}-app"
