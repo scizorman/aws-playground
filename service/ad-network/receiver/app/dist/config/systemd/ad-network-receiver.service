@@ -1,0 +1,13 @@
+[Unit]
+Description=Ad Network tracking server (ad-network-receiver)
+
+[Service]
+Type=simple
+ExecStart=/opt/ad-network-receiver/bin/ad-network-receiver
+ExecStop=/bin/kill -HUB $MAINPID
+ExecRestart=/bin/kill -HUB $MAINPID && /opt/ad-network-receiver/bin/ad-network-receiver
+StandardOutput=append:/var/log/ad-network-receiver
+StandardError=append:/var/log/ad-network-receiver
+
+[Install]
+WantedBy=multi-user.target
