@@ -1,0 +1,91 @@
+name: 'Ad Network Receiver'
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/ad-network-receiver.yaml'
+      - 'app/ad-network/receiver'
+  pull_request:
+    paths:
+      - '.github/workflows/ad-network-receiver.yaml'
+      - 'app/ad-network/receiver'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: 'app/ad-network/receiver'
+
+jobs:
+  verification:
+    name: 'Verification'
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - name: 'Set up Go'
+        id: 'setup-go'
+        uses: 'actions/setup-go@v5'
+        with:
+          go-version-file: 'app/ad-network/receiver/go.mod'
+      - name: 'Download Go modules'
+        if: ${{ steps.setup-go.outputs.cache-hit != 'true' }}
+        run: |
+          make deps
+      - name: 'Lint'
+        run: |
+          make lint
+      - name: 'Test'
+        run: |
+          make test
+  build:
+    name: 'Build'
+    needs:
+      - 'verification'
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - name: 'Set up Go'
+        uses: 'actions/setup-go@v5'
+        id: 'setup-go'
+        with:
+          go-version-file: 'app/ad-network/receiver/go.mod'
+      - name: 'Download Go modules'
+        if: ${{ steps.setup-go.outputs.cache-hit != 'true' }}
+        run: |
+          make deps
+      - name: 'Build'
+        run: |
+          make artifact.tgz
+      - name: 'Upload the artifact'
+        uses: 'actions/upload-artifact@v4'
+        with:
+          name: 'ad-network-receiver-artifact'
+          path: 'app/ad-network/receiver/artifact.tgz'
+  upload:
+    name: 'Upload'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    needs:
+      - 'build'
+    if: "github.ref_name == 'main' || github.event_name == 'workflow_dispatch'"
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - name: 'Download the artifact'
+        uses: 'actions/upload-artifact@v4'
+        with:
+          name: 'ad-network-receiver-artifact'
+          path: 'app/ad-network/receiver/artifact.tgz'
+      - name: 'Configure AWS credentials'
+        uses: 'aws-actions/configure-aws-credentials@v4'
+        with:
+          role-to-assume: 'arn:aws:iam::217082601537:role/ad-network-receiver-github-actions-artifact-uploader'
+          aws-region: 'ap-northeast-1'
+      - name: 'Upload the artifact'
+        run: |
+          make upload
