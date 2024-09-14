@@ -61,4 +61,4 @@ jobs:
         uses: 'actions/upload-artifact@v4'
         with:
           name: 'artifact.tgz'
-          path: './artifact.tgz'
+          path: 'app/ad-network/receiver/artifact.tgz'
