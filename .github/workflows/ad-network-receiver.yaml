@@ -66,6 +66,9 @@ jobs:
           path: 'app/ad-network/receiver/artifact.tgz'
   upload:
     name: 'Upload'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     needs:
       - 'build'
     runs-on: 'ubuntu-22.04'
