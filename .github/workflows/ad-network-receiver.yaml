@@ -1,0 +1,64 @@
+name: 'Ad Network Receiver'
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/ad-network-receiver.yaml'
+      - 'app/ad-network/receiver'
+  pull_request:
+    paths:
+      - '.github/workflows/ad-network-receiver.yaml'
+      - 'app/ad-network/receiver'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: 'app/ad-network/receiver'
+
+jobs:
+  verification:
+    name: 'Application Verification'
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - name: 'Set up Go'
+        id: 'setup-go'
+        uses: 'actions/setup-go@v5'
+        with:
+          go-version-file: 'go.mod'
+      - name: 'Download Go modules'
+        if: ${{ steps.setup-go.outputs.cache-hit != 'true' }}
+        run: |
+          make deps
+      - name: 'Lint'
+        run: |
+          make lint
+      - name: 'Test'
+        run: |
+          make test
+  build:
+    name: 'Build'
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - name: 'Set up Go'
+        uses: 'actions/setup-go@v5'
+        id: 'setup-go'
+        with:
+          go-version-file: 'go.mod'
+      - name: 'Download Go modules'
+        if: ${{ steps.setup-go.outputs.cache-hit != 'true' }}
+        run: |
+          make deps
+      - name: 'Build'
+        run: |
+          make artifact.tgz
+      - name: 'Upload the artifact'
+        uses: 'actions/upload-artifact@v4'
+        with:
+          name: 'artifact.tgz'
+          path: './artifact.tgz'
