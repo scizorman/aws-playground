@@ -19,7 +19,7 @@ defaults:
 
 jobs:
   verification:
-    name: 'Application Verification'
+    name: 'Verification'
     runs-on: 'ubuntu-22.04'
     steps:
       - name: 'Checkout'
@@ -28,7 +28,7 @@ jobs:
         id: 'setup-go'
         uses: 'actions/setup-go@v5'
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'app/ad-network/receiver/go.mod'
       - name: 'Download Go modules'
         if: ${{ steps.setup-go.outputs.cache-hit != 'true' }}
         run: |
@@ -49,7 +49,7 @@ jobs:
         uses: 'actions/setup-go@v5'
         id: 'setup-go'
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'app/ad-network/receiver/go.mod'
       - name: 'Download Go modules'
         if: ${{ steps.setup-go.outputs.cache-hit != 'true' }}
         run: |
