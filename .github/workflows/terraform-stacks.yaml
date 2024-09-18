@@ -4,11 +4,11 @@ on:
   pull_request:
     paths:
       - '.github/workflows/terraform-stacks.yaml'
-      - 'stacks/terraform/**'
+      - 'infrastructure/terraform/**'
 
 defaults:
   run:
-    working-directory: 'stacks/terraform'
+    working-directory: 'infrastructure/terraform'
 
 jobs:
   lint:
